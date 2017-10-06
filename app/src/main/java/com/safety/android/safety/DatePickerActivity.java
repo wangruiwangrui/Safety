@@ -25,14 +25,6 @@ public class DatePickerActivity extends SingleFragmentActivity {
 
 
     @Override
-    protected Fragment createFragment(Date date) {
-        Bundle args=new Bundle();
-        args.putSerializable(ARG_DATE,date);
-
-        return DatePickerActivity.newInstance(date);
-    }
-
-    @Override
     protected Fragment createFragment() {
         return null;
     }

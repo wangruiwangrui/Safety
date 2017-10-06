@@ -1,8 +1,14 @@
 package com.safety.android.safety;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,12 +19,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.safety.android.safety.Camera.CameraActivity;
+import com.safety.android.safety.LocalFile.SdCard;
+import com.safety.android.safety.PhotoGallery.PhotoGalleryActivity;
 import com.safety.android.safety.SQLite3.SafeInfo;
 import com.safety.android.safety.SafeList.SafeListActivity;
+import com.safety.android.util.phone;
 
-import java.io.File;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 
 /**
@@ -26,26 +34,14 @@ import java.util.UUID;
  */
 
 public class SafeBoxFragment extends Fragment {
-    private static final String ARG_Safe_ID="safe_id";
     private SafeBox mBeatBox;
     private AlertDialog dialog;
-    private SafeInfo mSafeInfo;
-    private File mPhotoFile;
 
-    private static final int REQUEST_PHOTO= 2;
-
+    private  static final int REQUEST_CONTACT=1;
+    private static final int REQUEST_DATE=0;
 
     public static SafeBoxFragment newInstance(){
         return new SafeBoxFragment();
-    }
-
-    public static SafeBoxFragment newInstance(UUID uuid){
-        Bundle args=new Bundle();
-        args.putSerializable(ARG_Safe_ID,uuid);
-
-       SafeBoxFragment fragment=new SafeBoxFragment();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -73,7 +69,6 @@ public class SafeBoxFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-
     }
 
     private class SafeHolder extends RecyclerView.ViewHolder
@@ -127,15 +122,43 @@ public class SafeBoxFragment extends Fragment {
                     }
                 };
             }else
-            if(i==4)
+            if(i==4){
                 mButton.setBackground(getResources().getDrawable(R.drawable.button_box4));
-            else
-            if(i==5)
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SdCard.getFilePath();
+                    }
+                };
+            }else
+            if(i==5) {
                 mButton.setBackground(getResources().getDrawable(R.drawable.button_box5));
-            else
-            if(i==6)
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Intent pickContact=new Intent(Intent.ACTION_PICK,
+                                ContactsContract.Contacts.CONTENT_URI);
+                        //检查SDK版本；如果它比Android 6.0更大,便向用户请求READ_CONTACTS权限
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 100);
+                            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+                            startActivityForResult(pickContact,REQUEST_CONTACT);
+                        }else {
+                            startActivityForResult(pickContact,REQUEST_CONTACT);
+                        }
+                    }
+                };
+            }else
+            if(i==6) {
                 mButton.setBackground(getResources().getDrawable(R.drawable.button_box6));
-            else
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), PhotoGalleryActivity.class);
+                        startActivity(intent);
+                    }
+                };
+            }else
             if(i==7) {
                 mButton.setBackground(getResources().getDrawable(R.drawable.button_box7));
 
@@ -164,6 +187,55 @@ public class SafeBoxFragment extends Fragment {
         public void onClick(View v) {
             if(onClickListener!=null)
                onClickListener.onClick(v);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(resultCode!= Activity.RESULT_OK){
+            return;
+        }
+
+        if(requestCode==REQUEST_DATE){
+
+        }else if(requestCode==REQUEST_CONTACT&&data!=null){
+            Uri contactUri=data.getData();
+
+            String [] queryFields=new String []{
+                    ContactsContract.Contacts.DISPLAY_NAME
+            };
+
+            Cursor cursor=getActivity().getContentResolver()
+                    .query(contactUri,queryFields,null,null,null);
+
+            try {
+                if (cursor.getCount() == 0) {
+                    return;
+                }
+
+                cursor.moveToFirst();
+                String suspect = cursor.getString(0);
+
+
+                Map a= phone.getContacts(this.getActivity());
+
+                String phoneNumber=null;
+                for(Object key:a.keySet()){
+                    if(suspect.equals(key)) {
+                        phoneNumber=((String) a.get(key));
+                    }
+                }
+
+                if(phoneNumber!=null) {
+                    Uri number = Uri.parse("tel:" + phoneNumber);
+                    Intent i=new Intent(Intent.ACTION_DIAL,number);
+                    startActivity(i);
+                }
+
+
+            }finally {
+                cursor.close();
+            }
         }
     }
 

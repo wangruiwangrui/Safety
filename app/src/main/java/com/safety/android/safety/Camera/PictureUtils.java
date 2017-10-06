@@ -9,7 +9,7 @@ import android.graphics.Point;
  * Created by WangJing on 2017/6/15.
  */
 
-public class PictureUtils {
+class PictureUtils {
     public static Bitmap getScaledBitmap(String path, Activity activity){
         Point size=new Point();
         activity.getWindowManager().getDefaultDisplay()

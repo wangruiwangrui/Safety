@@ -1,12 +1,10 @@
 package com.safety.android.safety.SQLite3;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -73,7 +71,6 @@ public class SafeLab {
         }
     }
 
-    @SuppressLint("LongLogTag")
     public File getPhotoFile(SafeInfo crime){
         File externalFilesDir=mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File file=null;
@@ -82,7 +79,6 @@ public class SafeLab {
         }
         try {
              file= new File(externalFilesDir, crime.getPhotoFilename());
-            Log.d("tag safelab photofilename=",crime.getPhotoFilename());
         }catch (Exception e){
             e.printStackTrace();
         }

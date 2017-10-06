@@ -5,16 +5,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
-import java.util.Date;
-
 /**
  * Created by WangJing on 2017/5/28.
  */
 
 public abstract class SingleFragmentActivity extends AppCompatActivity {
     protected abstract Fragment createFragment();
-
-    protected abstract Fragment createFragment(Date date);
 
     @Override
     public void onCreate(Bundle savedinstancrState){

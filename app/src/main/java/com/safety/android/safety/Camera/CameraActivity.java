@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 
 import com.safety.android.safety.SingleFragmentActivity;
 
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -28,10 +27,5 @@ public class CameraActivity extends SingleFragmentActivity {
     protected Fragment createFragment() {
         UUID crimeId= (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
         return CameraFragment.newInstance(crimeId);
-    }
-
-    @Override
-    protected Fragment createFragment(Date date) {
-        return null;
     }
 }

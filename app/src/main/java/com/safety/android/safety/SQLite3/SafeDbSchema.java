@@ -6,7 +6,7 @@ package com.safety.android.safety.SQLite3;
 
 public class SafeDbSchema {
     public static final class CrimeTable{
-        public static final String NAME="crimes";
+        public static final String NAME="safety";
 
         public static final class Cols{
             public static final String UUID="uuid";

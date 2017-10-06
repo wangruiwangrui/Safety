@@ -10,7 +10,6 @@ import com.safety.android.safety.Camera.CameraFragment;
 import com.safety.android.safety.SQLite3.SafeInfo;
 import com.safety.android.safety.SingleFragmentActivity;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -76,10 +75,5 @@ implements SafeListFragment.Callbacks{
     protected Fragment createFragment() {
         UUID crimeId= (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
         return CameraFragment.newInstance(crimeId);
-    }
-
-    @Override
-    protected Fragment createFragment(Date date) {
-        return null;
     }
 }

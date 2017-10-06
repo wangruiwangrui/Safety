@@ -59,7 +59,7 @@ public class CameraFragment extends Fragment {
     private File mPhotoFile;
     private EditText mTitleField;
     private Button mDateButton;
-    private Button mSuspectButton;
+    private Button mPickContactButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
 
@@ -116,7 +116,7 @@ public class CameraFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_camera, container, false);
+        final View v = inflater.inflate(R.layout.fragment_camera, container, false);
 
         mTitleField = (EditText) v.findViewById(R.id.crime_title);
         mTitleField.setText(mSafeInfo.getTitle());
@@ -201,12 +201,19 @@ public class CameraFragment extends Fragment {
 
         final Intent pickContact=new Intent(Intent.ACTION_PICK,
                 ContactsContract.Contacts.CONTENT_URI);
-        mSuspectButton= (Button) v.findViewById(R.id.crime_suspect);
-        mSuspectButton.setOnClickListener(new View.OnClickListener(){
+        mPickContactButton= (Button) v.findViewById(R.id.crime_suspect);
+        mPickContactButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
-                startActivityForResult(pickContact,REQUEST_CONTACT);
+                //检查SDK版本；如果它比Android 6.0更大,便向用户请求READ_CONTACTS权限
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 100);
+                    //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+                    startActivityForResult(pickContact, REQUEST_CONTACT);
+                }else {
+                    startActivityForResult(pickContact, REQUEST_CONTACT);
+                }
             }
         });
 
@@ -215,7 +222,7 @@ public class CameraFragment extends Fragment {
         PackageManager packageManager=getActivity().getPackageManager();
         if(packageManager.resolveActivity(pickContact,
                 PackageManager.MATCH_DEFAULT_ONLY)==null){
-            mSuspectButton.setEnabled(false);
+            mPickContactButton.setEnabled(false);
         }
 
         mPhotoButton= (ImageButton) v.findViewById(R.id.crime_camera);
@@ -301,13 +308,8 @@ public class CameraFragment extends Fragment {
                 String suspect = cursor.getString(0);
 
 
-                //检查SDK版本；如果它比Android 6.0更大,便向用户请求READ_CONTACTS权限
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 100);
-                    //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
-                }
 
-                mSuspectButton.setText(suspect);
+                mPickContactButton.setText(suspect);
                 mSafeInfo.setmSuspect(suspect);
 
                 Map a= phone.getContacts(this.getActivity());
@@ -359,8 +361,10 @@ public class CameraFragment extends Fragment {
 
     private void updatePhotoView(){
         ViewTreeObserver observer=mPhotoView.getViewTreeObserver();
+        Log.i("tag sdkint=", String.valueOf(Build.VERSION.SDK_INT));
+        if(Build.VERSION.SDK_INT > 18) {
 
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             int w,h;
             @Override
             public void onGlobalLayout() {
@@ -379,7 +383,16 @@ public class CameraFragment extends Fragment {
 
                 }
             }
-        });
+         });
+       }else {
+           if (mPhotoFile == null || !mPhotoFile.exists()) {
+
+           } else {
+               Bitmap bitmap = PictureUtils.getScaledBitmap(
+                       mPhotoFile.getPath(), getActivity());
+               mPhotoView.setImageBitmap(bitmap);
+           }
+       }
     }
 
     private void updateDate(){

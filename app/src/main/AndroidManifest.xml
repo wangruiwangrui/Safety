@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.safety.android.safety">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18"
@@ -9,6 +10,7 @@
     <uses-feature android:name="android.hardware.camera2"
         android:required="false"
         />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -20,7 +22,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -37,6 +40,10 @@
         <activity android:name=".SafeList.SafePagerActivity"
             android:label="Safety"
             android:parentActivityName=".SafeList.SafeListActivity">
+        </activity>
+        <activity android:name=".PhotoGallery.PhotoGalleryActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".MainActivity">
         </activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
