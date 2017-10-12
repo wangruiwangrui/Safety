@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.safety.android.safety.Camera.CameraActivity;
 import com.safety.android.safety.LocalFile.SdCard;
+import com.safety.android.safety.Message.Chat2Activity;
 import com.safety.android.safety.PhotoGallery.PhotoGalleryActivity;
 import com.safety.android.safety.SQLite3.SafeInfo;
 import com.safety.android.safety.SafeList.SafeListActivity;
@@ -161,7 +162,13 @@ public class SafeBoxFragment extends Fragment {
             }else
             if(i==7) {
                 mButton.setBackground(getResources().getDrawable(R.drawable.button_box7));
-
+                onClickListener=new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(getActivity(), Chat2Activity.class);
+                        startActivity(intent);
+                    }
+                };
             }else
             if(i==8) {
                 mButton.setBackground(getResources().getDrawable(R.drawable.button_box8));

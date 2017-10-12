@@ -1,5 +1,6 @@
 package com.safety.android.safety;
 
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -8,14 +9,26 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.safety.android.mqtt.connect.MqttClient;
+import com.safety.android.mqtt.event.MessageEvent;
+
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private NotificationManager notificationManager ;
+    private NotificationCompat.Builder notificationBuilder ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +57,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        notificationManager = (NotificationManager) getSystemService(getBaseContext().NOTIFICATION_SERVICE);
+        notificationBuilder = new NotificationCompat.Builder(this);
+        MqttClient.getMqttAndroidClientInstace(getBaseContext());
     }
 
     @Override
@@ -101,5 +118,35 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    /**
+     * 运行在主线程
+     * @param event
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        String string = event.getString();
+        /**接收到服务器推送的信息*/
+        if("".equals(string)){
+
+            String topic = event.getTopic();
+            MqttMessage mqttMessage = event.getMqttMessage();
+            String s = new String(mqttMessage.getPayload());
+            topic=topic+" : "+s;
+            Log.d("tag MainActivity topic=",topic);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }
