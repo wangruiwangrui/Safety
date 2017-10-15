@@ -43,7 +43,7 @@ public class SafeListFragment extends Fragment {
     private Callbacks mCallbacks;
 
     public interface Callbacks{
-        void onCrimeSelected(SafeInfo safeInfo);
+        void onSafeSelected(SafeInfo safeInfo);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class SafeListFragment extends Fragment {
               //  Intent intent=CrimePagerActivity.newIntent(getActivity(),crime.getId());
               //  startActivity(intent);
                 updateUI();
-                mCallbacks.onCrimeSelected(safeInfo);
+                mCallbacks.onSafeSelected(safeInfo);
                 return true;
             case R.id.menu_item_show_subtitle:
                 mSubtitleVisible=!mSubtitleVisible;
@@ -191,7 +191,7 @@ public class SafeListFragment extends Fragment {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean isCheck) {
                     SafeLab safeLab=SafeLab.get(getActivity());
                     safeLab.updateCrime(mSafeInfo);
-                    mCallbacks.onCrimeSelected(mSafeInfo);
+                    mCallbacks.onSafeSelected(mSafeInfo);
 
                 }
             });
@@ -238,7 +238,7 @@ public class SafeListFragment extends Fragment {
             }
 
            // startActivityForResult(intent,REQUEST_Safe);
-            mCallbacks.onCrimeSelected(mSafeInfo);
+            mCallbacks.onSafeSelected(mSafeInfo);
         }
 
 

@@ -2,13 +2,18 @@ package com.safety.android.safety.SafeList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.safety.android.safety.Camera.CameraFragment;
+import com.safety.android.safety.R;
 import com.safety.android.safety.SQLite3.SafeInfo;
-import com.safety.android.safety.SingleFragmentActivity;
+import com.safety.android.safety.SQLite3.SafeLab;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,27 +22,27 @@ import java.util.UUID;
  * Created by WangJing on 2017/5/30.
  */
 
-public class SafePagerActivity extends SingleFragmentActivity
+public class SafePagerActivity extends AppCompatActivity
 implements SafeListFragment.Callbacks{
-    private static final String EXTRA_CRIME_ID=
-            "com.bignerdranch.android.criminalintent.crime_id";
+    private static final String EXTRA_SAFE_ID=
+            "com.safety.android.safety.safe_id";
 
     private ViewPager mViewPager;
     private List<SafeInfo> mSafeInfos;
 
     public static Intent newIntent(Context packageContext, UUID crimeId){
         Intent intent=new Intent(packageContext,SafePagerActivity.class);
-        intent.putExtra(EXTRA_CRIME_ID,crimeId);
+        intent.putExtra(EXTRA_SAFE_ID,crimeId);
         Log.d("cccc",crimeId.toString());
         return intent;
     }
-/*
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_safe_pager);
 
-        UUID crimeId= (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
+        UUID crimeId= (UUID) getIntent().getSerializableExtra(EXTRA_SAFE_ID);
 
         mViewPager= (ViewPager) findViewById(R.id.activity_crime_pager_view_pager);
 
@@ -64,16 +69,21 @@ implements SafeListFragment.Callbacks{
         }
 
     }
-*/
+
 
     @Override
-    public void onCrimeSelected(SafeInfo safeInfo) {
+    public void onSafeSelected(SafeInfo safeInfo) {
+        if(findViewById(R.id.detail_fragment_container)==null){
+            Intent intent=SafePagerActivity.newIntent(this,safeInfo.getmId());
+            startActivity(intent);
+        }else {
+            Fragment newDetail=CameraFragment.newInstance(safeInfo.getmId());
 
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.detail_fragment_container,newDetail)
+                    .commit();
+        }
     }
 
-    @Override
-    protected Fragment createFragment() {
-        UUID crimeId= (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
-        return CameraFragment.newInstance(crimeId);
-    }
+
 }

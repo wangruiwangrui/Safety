@@ -18,12 +18,13 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.safety.android.safety.Camera.CameraActivity;
 import com.safety.android.safety.LocalFile.SdCard;
 import com.safety.android.safety.Message.Chat2Activity;
 import com.safety.android.safety.PhotoGallery.PhotoGalleryActivity;
 import com.safety.android.safety.SQLite3.SafeInfo;
+import com.safety.android.safety.SQLite3.SafeLab;
 import com.safety.android.safety.SafeList.SafeListActivity;
+import com.safety.android.safety.SafeList.SafePagerActivity;
 import com.safety.android.util.phone;
 
 import java.util.List;
@@ -177,7 +178,9 @@ public class SafeBoxFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                      //   startActivityForResult(captureImage, REQUEST_PHOTO);
-                        Intent intent = new Intent(getActivity(), CameraActivity.class);
+                        SafeInfo mSafeInfo=new SafeInfo();
+                        SafeLab.get(getActivity()).addSafeInfo(mSafeInfo);
+                        Intent intent=SafePagerActivity.newIntent(getActivity(),mSafeInfo.getmId());
                         startActivity(intent);
                     }
                 };

@@ -16,7 +16,7 @@ public class SafeListActivity extends SingleFragmentActivity
 
 
     @Override
-    public void onCrimeSelected(SafeInfo safeInfo) {
+    public void onSafeSelected(SafeInfo safeInfo) {
             Intent intent=SafePagerActivity.newIntent(this,safeInfo.getmId());
             startActivity(intent);
     }
