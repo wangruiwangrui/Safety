@@ -18,12 +18,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.safety.android.safety.Asset.AssetListActivity;
+import com.safety.android.safety.HiddenCheck.HiddenCheckListActivity;
+import com.safety.android.safety.HiddenNeaten.HiddenNeatenListActivity;
 import com.safety.android.safety.LocalFile.SdCard;
 import com.safety.android.safety.Message.Chat2Activity;
 import com.safety.android.safety.PhotoGallery.PhotoGalleryActivity;
 import com.safety.android.safety.SQLite3.SafeInfo;
 import com.safety.android.safety.SQLite3.SafeLab;
-import com.safety.android.safety.SafeList.SafeListActivity;
 import com.safety.android.safety.SafeList.SafePagerActivity;
 import com.safety.android.util.phone;
 
@@ -95,10 +97,16 @@ public class SafeBoxFragment extends Fragment {
                 onClickListener = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        /*
                         dialog = new AlertDialog.Builder(v.getContext()).setTitle("多选对话框")
                                 .setNegativeButton("取消", null).setPositiveButton("确定", null)
                                 .create();
                         dialog.show();
+                        */
+
+                        Intent intent=new Intent(getActivity(), AssetListActivity.class);
+                        startActivity(intent);
+
                     }
                 };
             }else
@@ -107,10 +115,14 @@ public class SafeBoxFragment extends Fragment {
                 onClickListener = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        /*
                         dialog = new AlertDialog.Builder(v.getContext()).setTitle("多选对话框")
                                 .setNegativeButton("取消", null).setPositiveButton("确定", null)
                                 .create();
                         dialog.show();
+                        */
+                        Intent intent=new Intent(getActivity(), HiddenCheckListActivity.class);
+                        startActivity(intent);
                     }
                 };
             }else
@@ -119,7 +131,7 @@ public class SafeBoxFragment extends Fragment {
                 onClickListener = new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent=new Intent(getActivity(), SafeListActivity.class);
+                        Intent intent=new Intent(getActivity(), HiddenNeatenListActivity.class);
                         startActivity(intent);
                     }
                 };

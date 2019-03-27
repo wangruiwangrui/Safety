@@ -1,6 +1,7 @@
 package com.safety.android.safety;
 
 import android.app.NotificationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,7 +16,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.safety.android.http.OKHttpFetch;
 import com.safety.android.mqtt.connect.MqttClient;
 import com.safety.android.mqtt.event.MessageEvent;
 
@@ -88,7 +91,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_out) {
+
+            new FetchItemsTask().execute();
+
             return true;
         }
 
@@ -149,4 +155,25 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
+
+    private class FetchItemsTask extends AsyncTask<Void,Void,String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            return new OKHttpFetch(getApplication()).get("/voucher/user/logout.do");
+        }
+
+
+        @Override
+        protected void onPostExecute(String items) {
+
+            if(items!=null){
+                Toast.makeText(getApplication(),"退出成功",Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+    }
+
 }

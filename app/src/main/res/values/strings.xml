@@ -4,7 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_out">退出</string>
 
     <string name="time_picker">TimePicker</string>
     <string name="send_report">发送</string>
